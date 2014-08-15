@@ -1,0 +1,86 @@
+{
+    "builders": [
+        {
+            "name": "sb_win2012r2sc_vbox",
+            "type": "virtualbox-iso",
+            "iso_url": "../iso/en_windows_server_2012_r2_with_update_x64_dvd_4065220.iso",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "af6a7f966b4c4e31da5bc3cdc3afcbec",
+            "headless": false,
+            "boot_wait": "2m",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_wait_timeout": "2h",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "guest_os_type": "Windows2012_64",
+            "guest_additions_path": "/cygdrive/c/Users/vagrant/VBoxGuestAdditions.iso",
+            "disk_size": 30720,
+            "floppy_files": [
+                "./Autounattend.xml",
+                "../scripts/install-cygwin-sshd.bat",
+                "../scripts/enable-admin.bat",
+                "../scripts/vagrant-ssh.bat",
+                "../scripts/oracle-cert.cer",
+                "../scripts/vagrant.pub"
+            ],
+            "vboxmanage": [
+                ["modifyvm", "{{.Name}}", "--memory", "1024"],
+                ["modifyvm", "{{.Name}}", "--cpus", "2"]
+            ]
+        },
+        {
+            "name": "sb_win2012r2sc_parallels",
+            "type": "parallels-iso",
+            "iso_url": "../iso/en_windows_server_2012_r2_with_update_x64_dvd_4065220.iso",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "af6a7f966b4c4e31da5bc3cdc3afcbec",
+            "headless": false,
+            "boot_wait": "2m",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_wait_timeout": "2h",
+            "parallels_tools_host_path": "/Applications/Parallels Desktop.app/Contents/Resources/Tools/prl-tools-win.iso",
+            "shutdown_command": "powershell.exe 'Stop-Computer -Force'",
+            "disk_size": 30720,
+            "floppy_files": [
+                "./Autounattend.xml",
+                "../scripts/install-cygwin-sshd.bat",
+                "../scripts/enable-admin.bat",
+                "../scripts/vagrant-ssh.bat",
+                "../scripts/oracle-cert.cer",
+                "../scripts/vagrant.pub"
+            ],
+            "prlctl": [
+                ["set", "{{.Name}}", "--memsize", "1024"],
+                ["set", "{{.Name}}", "--cpus", "2"]
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "remote_path": "/cygdrive/c/Users/vagrant/win-updates.ps1",
+            "execute_command": "{{ .Vars }} powershell.exe C:/Users/vagrant/win-updates.ps1",
+            "scripts": [
+                "../scripts/win-updates.ps1"
+            ]
+        },
+        {
+            "type": "shell",
+            "remote_path": "/cygdrive/c/Users/vagrant/setup.ps1",
+            "start_retry_timeout": "10m",
+            "execute_command": "{{ .Vars }} powershell /c C:/Users/vagrant/setup.ps1",
+            "scripts": [
+                "../scripts/install_hypervisor_tools.ps1"
+            ]
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "vagrant",
+            "keep_input_artifact": true,
+            "output": "sb-windows2012r2-datacenter-amd64_{{.Provider}}.box",
+            "vagrantfile_template": "vagrantfile-sb-windows_2012r2.template"
+        }
+    ]
+}

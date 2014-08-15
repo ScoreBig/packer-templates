@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+    config.vm.define "vagrant-win2012r2-SC-pub"
+    config.vm.box = "windows_2012r2_servercore_public"
+
+    # Admin user name and password
+    config.winrm.username = "vagrant"
+    config.winrm.password = "vagrant"
+
+    config.vm.guest = :windows
+    config.windows.halt_timeout = 15
+
+    config.vm.provider :virtualbox do |v, override|
+        v.gui = true
+        v.customize ["modifyvm", :id, "--memory", 1024]
+        v.customize ["modifyvm", :id, "--cpus", 2]
+        override.vm.network :private_network, ip: "192.186.100.100"
+    end
+
+    config.vm.provider "parallels" do |v, override|
+      v.memory = 1024
+      v.cpus = 2
+      override.vm.network :private_network, ip: "10.37.129.150"
+    end
+
+end

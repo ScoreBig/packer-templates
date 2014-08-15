@@ -1,0 +1,4 @@
+.idea/
+iso/*.iso
+windows*/output-*/
+*.box
