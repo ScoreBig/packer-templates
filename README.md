@@ -1,12 +1,12 @@
 Windows Server Packer Images
 ----------------------------
 
-These are public version of the Packer templates we use to build Windows Server images for Vagrant, OpenStack, etc.
+These are the public version of the Packer templates we use to build Windows Server images for Vagrant, OpenStack, etc.
 
-They are based on the templates provided by [OpenTable](https://github.com/opentable/packer-images/).
+They are based on the templates provided by [OpenTable](https://github.com/opentable/packer-images/) and are available under the same license.
  
 They include a trial license key and are therefore only valid for 30 days. You must replace the key in Autounattend.xml 
-with a valid permanent key to use the generated OS images beyond 30 days.
+with a valid permanent key to use the generated OS images beyond this.
 
 The images produced are Server Core (no GUI shell) unless otherwise specified.
 
